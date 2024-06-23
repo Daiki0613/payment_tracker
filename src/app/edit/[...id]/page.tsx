@@ -38,7 +38,7 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
     const loadSession = async () => {
       const session = await getSession();
       if (!session) {
-        router.push("/");
+        return;
       } else {
         setSession(session);
       }

@@ -62,7 +62,7 @@ const Home: React.FC = () => {
     <main className="flex min-h-screen justify-center bg-gray-100">
       <div className="flex flex-col items-center w-full max-w-7xl m-1">
         <div className="text-2xl font-bold mb-4 mt-2">
-          {session?.name}'s Payments Summary
+          {session?.name}&apos;s Payments Summary
         </div>
         {userExpenseSummary.length === 0 ? (
           <p className="text-gray-600 mt-4">No expenses yet...</p>

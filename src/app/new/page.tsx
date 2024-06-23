@@ -22,7 +22,7 @@ const CreateExpenseForm: React.FC = () => {
     const session = async () => {
       const session = await getSession();
       if (!session) {
-        router.push("/");
+        return;
       } else {
         setPaidBy({ id: session.userId, name: session.name });
         setSession(session);
