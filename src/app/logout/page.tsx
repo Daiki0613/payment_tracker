@@ -1,30 +1,17 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { logout } from "@/auth/actions";
+import { useAuth } from "@/context/authContext";
 
 const LogoutPage = () => {
-  const router = useRouter();
+  const { logout } = useAuth();
 
   useEffect(() => {
     const handleLogout = async () => {
-      try {
-        const response = await logout();
-
-        if (response) {
-          // Redirect to login page after logout
-          router.push("/login");
-        } else {
-          console.error("Failed to log out");
-        }
-      } catch (error) {
-        console.error("An error occurred while logging out", error);
-      }
+      await logout();
     };
-
     handleLogout();
-  }, [router]);
+  }, []);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">

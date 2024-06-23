@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { login } from "@/auth/actions";
+import { useAuth } from "@/context/authContext";
 
 const LoginPage = () => {
   const [username, setUsername] = useState("");
@@ -10,26 +11,14 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const router = useRouter();
+  const { login, loading } = useAuth();
 
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     try {
-      const response = await login(username, password);
-      if (response) {
-        setSuccess("Login successful! Redirecting...");
-        setError("");
-        setTimeout(() => {
-          router.refresh();
-          router.push("/");
-        }, 2000);
-      } else {
-        setError("An error occurred");
-        setSuccess("");
-      }
-    } catch (error) {
-      setError("An error occurred");
-      setSuccess("");
+      await login(username, password);
+    } catch (err) {
+      setError("Failed to login. Please try again.");
     }
   };
 

@@ -38,18 +38,14 @@ const Home: React.FC = () => {
               key={index}
               className="w-full bg-white shadow-md rounded-lg p-4 mb-1"
             >
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <Link href={"/edit/" + expense.id}>
                   <div className="col-span-1">
                     <h1 className="text-lg font-bold">{expense.description}</h1>
                   </div>
                 </Link>
-                <div className="col-span-1 flex items-center space-x-2">
-                  <p className="text-gray-600">Amount: {expense.amount}</p>
-                  <p className="text-gray-600">
-                    Paid by: {expense.paidBy.name}
-                  </p>
-                </div>
+                <p className="text-gray-600">Amount: {expense.amount}</p>
+                <p className="text-gray-600">Paid by: {expense.paidBy.name}</p>
               </div>
               <div className="border-t border-gray-200 pt-2">
                 <h2 className="text-sm font-bold mb-2">Details:</h2>
