@@ -16,7 +16,11 @@ const LoginPage = () => {
   const handleLogin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
-      await login(username, password);
+      const result = await login(username, password);
+      if (!result) {
+        setError("Failed to login. Please try again.");
+        return;
+      }
     } catch (err) {
       setError("Failed to login. Please try again.");
     }

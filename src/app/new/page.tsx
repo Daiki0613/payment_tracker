@@ -104,13 +104,36 @@ const CreateExpenseForm: React.FC = () => {
     }
   };
 
+  const handleAddEveryone = () => {
+    const newParticipants = users.map((user) => ({
+      id: user.id,
+      name: user.name,
+      amountOwed: 0,
+      description: "",
+    }));
+    setParticipants(newParticipants);
+  };
+
+  const handleSplitEqually = () => {
+    const length = participants.filter((p) => p.name !== "").length;
+    if (length === 0) {
+      return;
+    }
+    const amountOwed = Math.round((amount / length) * 100) / 100;
+    const newParticipants = participants.map((participant) => ({
+      ...participant,
+      amountOwed: amountOwed,
+    }));
+    setParticipants(newParticipants);
+  };
+
   if (!session) {
     return <div>Loading...</div>;
   }
   return (
     <form
       onSubmit={handleSubmit}
-      className="max-w-lg mx-auto p-4 bg-white shadow-md rounded-md"
+      className="max-w-lg mx-auto p-4 bg-white shadow-md rounded-md min-h-screen"
     >
       <div className="mb-4">
         <label
@@ -181,6 +204,7 @@ const CreateExpenseForm: React.FC = () => {
                 handleParticipantChange(index, "name", e.target.value)
               }
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mr-2"
+              required
             >
               <option value="">Select Participant</option>
               {users.map((user) => (
@@ -227,13 +251,29 @@ const CreateExpenseForm: React.FC = () => {
             </button>
           </div>
         ))}
-        <button
-          type="button"
-          onClick={handleAddParticipant}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        >
-          Add Participant
-        </button>
+        <div className="flex justify-between">
+          <button
+            type="button"
+            onClick={handleAddParticipant}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4"
+          >
+            Add Participant
+          </button>
+          <button
+            type="button"
+            onClick={handleAddEveryone}
+            className="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4"
+          >
+            Add Everyone
+          </button>
+          <button
+            type="button"
+            onClick={handleSplitEqually}
+            className="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4"
+          >
+            Split Equally
+          </button>
+        </div>
       </div>
 
       <div className="flex items-center justify-between">

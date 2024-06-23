@@ -13,7 +13,7 @@ import { SessionPayload, getSession } from "@/auth/auth";
 
 interface AuthContextType {
   session: SessionPayload | null;
-  login: (username: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
   loading: boolean;
 }
@@ -42,18 +42,30 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     loadSession();
   }, []);
 
-  const handleLogin = async (username: string, password: string) => {
+  const handleLogin = async (
+    username: string,
+    password: string
+  ): Promise<boolean> => {
     setLoading(true);
     try {
-      await login(username, password); // Implement your login logic
+      const result = await login(username, password); // Implement your login logic
+      if (!result) {
+        setLoading(false);
+        return false;
+      }
       const session = await getSession();
+      if (!session) {
+        setLoading(false);
+        return false;
+      }
       setSession(session);
       setLoading(false);
       router.push("/"); // Redirect to home page after login
+      return true;
     } catch (error) {
       console.error("Login failed:", error);
       setLoading(false);
-      // Handle login error (e.g., display error message)
+      return false;
     }
   };
 

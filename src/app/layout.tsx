@@ -22,7 +22,7 @@ export default function RootLayout({
       <body>
         <AuthProvider>
           <Navbar />
-          {children}
+          <div className="min-h-screen">{children}</div>
           <Footer />
         </AuthProvider>
       </body>
