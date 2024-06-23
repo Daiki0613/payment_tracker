@@ -59,9 +59,9 @@ const Home: React.FC = () => {
   }
 
   return (
-    <main className="flex min-h-screen justify-center bg-gray-100">
-      <div className="flex flex-col items-center w-full max-w-7xl m-1">
-        <div className="text-2xl font-bold mb-4 mt-2">
+    <main className="flex min-h-screen justify-center ">
+      <div className="flex flex-col items-center w-full max-w-2xl m-4 bg-gray-100">
+        <div className="text-2xl font-bold mb-4 mt-4">
           {session?.name}&apos;s Payments Summary
         </div>
         {userExpenseSummary.length === 0 ? (

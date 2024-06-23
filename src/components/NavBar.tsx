@@ -9,7 +9,7 @@ import YourPaymentsButton from "./YourPaymentsButton";
 
 const Navbar = async () => {
   return (
-    <div className="flex items-center justify-between bg-blue-100 px-6 py-4 text-gray-700">
+    <div className="flex items-center justify-between bg-rose-200 px-6 py-4 text-gray-700">
       <div className="flex items-center space-x-3">
         <Link href="/">
           <div>Bordeaux Payment Tracker</div>
