@@ -153,9 +153,15 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
           </div>
 
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Participants
-            </label>
+            <div className="grid grid-cols-3 gap-4">
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                <p>Split Details</p>
+              </label>
+              <label className="block text-gray-700 text-sm font-bold mb-2">
+                Amount
+              </label>
+              <label className="block text-gray-700 text-sm font-bold mb-2"></label>
+            </div>
             {participants.map((participant, index) => (
               <div key={index} className="mb-2 flex">
                 <select

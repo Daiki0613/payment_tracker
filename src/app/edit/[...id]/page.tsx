@@ -126,9 +126,17 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (amount <= 0 || amount > 5000) {
+      setError("Please make the values greater than 0");
+      return;
+    }
 
     try {
       setParticipants(participants.filter((p) => p.name !== ""));
+      if (participants.some((p) => p.amountOwed <= 0)) {
+        setError("Each participant's amount owed must be greater than 0");
+        return;
+      }
       const total = participants.reduce((acc, p) => acc + p.amountOwed, 0);
       if (total < amount - 0.1 || amount + 0.1 < total) {
         setError("Total amount does not match");
@@ -292,7 +300,9 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
                 id="amount"
                 type="number"
                 value={amount}
-                onChange={(e) => setAmount(parseFloat(e.target.value))}
+                onChange={(e) => {
+                  setAmount(parseFloat(e.target.value));
+                }}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 required
               />

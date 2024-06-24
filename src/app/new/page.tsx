@@ -28,6 +28,15 @@ const CreateExpenseForm: React.FC = () => {
       } else {
         setPaidBy({ id: session.userId, name: session.name });
         setSession(session);
+        setParticipants([
+          {
+            id: session.userId,
+            name: session.name,
+            amountOwed: 0,
+            description: "",
+          },
+          { id: 0, name: "", amountOwed: 0, description: "" },
+        ]);
       }
     };
     session();
@@ -83,9 +92,17 @@ const CreateExpenseForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (amount <= 0 || amount > 5000) {
+      setError("Please make the values greater than 0");
+      return;
+    }
 
     try {
       setParticipants(participants.filter((p) => p.name !== ""));
+      if (participants.some((p) => p.amountOwed <= 0)) {
+        setError("Each participant's amount owed must be greater than 0");
+        return;
+      }
       const total = participants.reduce((acc, p) => acc + p.amountOwed, 0);
       if (total < amount - 0.1 || amount + 0.1 < total) {
         setError("Total amount does not match");
@@ -215,7 +232,7 @@ const CreateExpenseForm: React.FC = () => {
           className="block text-gray-700 text-sm font-bold mb-2"
           htmlFor="amount"
         >
-          Amount
+          Amount paid
         </label>
         <div className="flex justify-between">
           <select
@@ -233,7 +250,9 @@ const CreateExpenseForm: React.FC = () => {
             id="amount"
             type="number"
             value={amount}
-            onChange={(e) => setAmount(parseFloat(e.target.value))}
+            onChange={(e) => {
+              setAmount(parseFloat(e.target.value));
+            }}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             required
           />
@@ -264,9 +283,15 @@ const CreateExpenseForm: React.FC = () => {
       </div>
 
       <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2">
-          Participants
-        </label>
+        <div className="grid grid-cols-3 gap-4">
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            <p>Split Details</p>
+          </label>
+          <label className="block text-gray-700 text-sm font-bold mb-2">
+            Amount
+          </label>
+          <label className="block text-gray-700 text-sm font-bold mb-2"></label>
+        </div>
         {error && <p className="text-red-500 mb-4">{error}</p>}
         {participants.map((participant, index) => (
           <div key={index} className="mb-2 flex">
