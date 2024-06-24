@@ -29,7 +29,12 @@ const Home: React.FC = () => {
   if (loading) {
     return (
       <main className="flex min-h-screen justify-center">
-        <p className="text-gray-600">Loading expenses...</p>
+        <div>
+          <div className="text-gray-600">Loading expenses...</div>
+          <div className="text-gray-600 text-sm">
+            If this does not load, try refreshing...
+          </div>
+        </div>
       </main>
     );
   }

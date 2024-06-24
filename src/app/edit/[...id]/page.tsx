@@ -183,15 +183,61 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
   };
 
   const handleSplitEqually = () => {
-    const length = participants.filter((p) => p.name !== "").length;
+    // Function to shuffle array (Fisher-Yates shuffle)
+    function shuffleArray(array: any[]) {
+      const shuffledArray = [...array];
+      for (let i = shuffledArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffledArray[i], shuffledArray[j]] = [
+          shuffledArray[j],
+          shuffledArray[i],
+        ];
+      }
+      return shuffledArray;
+    }
+    // Filter out participants who have names (assuming `participants` is an array of objects with a `name` field)
+    const filteredParticipants = participants.filter((p) => p.name !== "");
+    const length = filteredParticipants.length;
+
     if (length === 0) {
       return;
     }
-    const amountOwed = Math.round((amount / length) * 100) / 100;
-    const newParticipants = participants.map((participant) => ({
-      ...participant,
-      amountOwed: amountOwed,
-    }));
+
+    const intAmount = Math.round(amount * 100);
+    // Calculate base payment and remainder
+    const basePayment = Math.floor(intAmount / length); // Allow decimal division for exact amounts
+    const remainder = intAmount - basePayment * length;
+    console.log(remainder);
+
+    // Shuffle participants array to randomize who pays more or less
+    const shuffledParticipants = shuffleArray(filteredParticipants);
+
+    // Initialize array to hold exact amounts owed
+    const exactPayments = new Array(length).fill(basePayment); // Round to two decimal places
+
+    // Distribute remainder randomly
+    for (let i = 0; i < remainder; i++) {
+      exactPayments[i] += 1; // Adjust for 0.01 pounds precision
+    }
+
+    // Update participants with exact amounts owed (using shuffled order)
+    const newParticipants = participants.map((participant, index) => {
+      const shuffledIndex = shuffledParticipants.findIndex(
+        (p) => p === participant
+      );
+      if (participant.name !== "") {
+        return {
+          ...participant,
+          amountOwed: parseFloat(
+            (exactPayments[shuffledIndex] / 100).toFixed(2)
+          ),
+        };
+      } else {
+        return participant; // Maintain participants without names (if any)
+      }
+    });
+
+    // Set state with updated participants
     setParticipants(newParticipants);
   };
 
