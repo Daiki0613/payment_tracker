@@ -179,13 +179,15 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
               </div>
             ))}
           </div>
-          <button
-            type="button"
-            onClick={() => router.push(`/edit/${expenseId}`)}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-2"
-          >
-            Edit
-          </button>
+          {session.userId === paidBy.id && (
+            <button
+              type="button"
+              onClick={() => router.push(`/edit/${expenseId}`)}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-2"
+            >
+              Edit
+            </button>
+          )}
         </form>
       </div>
     </>

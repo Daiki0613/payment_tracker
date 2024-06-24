@@ -11,6 +11,10 @@ const ChangePasswordPage = () => {
   const [success, setSuccess] = useState("");
   const router = useRouter();
 
+  if (process.env.NODE_ENV !== "development") {
+    return <div>Change Password invalid</div>;
+  }
+
   const handleChangePassword = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
