@@ -112,8 +112,11 @@ const Home: React.FC = () => {
                   );
                 } else if (summary.participantId === session?.userId) {
                   return (
-                    <div className="w-full max-w-lg text-left ml-5 flex justify-between p-2">
-                      <p key={index}>
+                    <p
+                      key={index}
+                      className="w-full max-w-lg text-left ml-5 flex justify-between p-2"
+                    >
+                      <p>
                         You owe {summary.payerName}{" "}
                         <span className="text-red-600">{summary.amount}</span>{" "}
                         in total
@@ -130,7 +133,7 @@ const Home: React.FC = () => {
                       >
                         Make payment
                       </button>
-                    </div>
+                    </p>
                   );
                 } else {
                   return (
@@ -240,7 +243,7 @@ const Home: React.FC = () => {
                 );
               };
               return (
-                <div className="w-full max-w-lg">
+                <div key={index} className="w-full max-w-lg">
                   <div className="flex justify-between">
                     {preview()}
                     <button
@@ -267,15 +270,7 @@ const Home: React.FC = () => {
                     </button>
                   </div>
                   {openDropdowns[index] && (
-                    <div className="mt-2 ml-5">
-                      {content()}
-                      {/* {details.map((detail: any, detailIndex: number) => (
-                        <p key={detailIndex} className="text-sm text-gray-600">
-                          {detail.description}:{" "}
-                          <span className="text-gray-800">{detail.amount}</span>
-                        </p>
-                      ))} */}
-                    </div>
+                    <div className="mt-2 ml-5">{content()}</div>
                   )}
                 </div>
               );

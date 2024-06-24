@@ -11,7 +11,7 @@ const LogoutPage = () => {
       await logout();
     };
     handleLogout();
-  }, []);
+  });
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
