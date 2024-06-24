@@ -2,18 +2,10 @@
 
 import { SessionPayload, getSession } from "@/auth/auth";
 import { notFound } from "next/navigation";
-import {
-  ParticipantData,
-  deleteExpenseById,
-  getExpenseById,
-  updateExpenseById,
-} from "@/prisma/payments";
+import { ParticipantData, getExpenseById } from "@/prisma/payments";
 import { UserData, getUsers } from "@/prisma/users";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { MdDelete } from "react-icons/md";
-import ConfirmationDialog from "@/components/ConfirmationDialog";
-import Link from "next/link";
 
 interface EditExpenseFormProps {
   params: {

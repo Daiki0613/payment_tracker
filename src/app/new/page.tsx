@@ -17,7 +17,7 @@ const CreateExpenseForm: React.FC = () => {
   const [participants, setParticipants] = useState<ParticipantData[]>([
     { id: 0, name: "", amountOwed: 0, description: "" },
   ]);
-
+  const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     const session = async () => {
       const session = await getSession();
@@ -83,13 +83,23 @@ const CreateExpenseForm: React.FC = () => {
     e.preventDefault();
 
     try {
+      setParticipants(participants.filter((p) => p.name !== ""));
+      const total = participants.reduce((acc, p) => acc + p.amountOwed, 0);
+      if (total < amount - 0.1 || amount + 0.1 < total) {
+        setError("Total amount does not match");
+        return;
+      }
       const response = await createExpense({
         description: description,
         amount: amount,
         paidById: paidBy?.id,
         participants: participants,
       });
-      router.push("/");
+      if (!response) {
+        setError("Something went wrong");
+      } else {
+        router.push("/");
+      }
     } catch {
       console.log("Failed to create expense");
     }
@@ -196,6 +206,7 @@ const CreateExpenseForm: React.FC = () => {
         <label className="block text-gray-700 text-sm font-bold mb-2">
           Participants
         </label>
+        {error && <p className="text-red-500 mb-4">{error}</p>}
         {participants.map((participant, index) => (
           <div key={index} className="mb-2 flex">
             <select

@@ -35,6 +35,7 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
     { id: 0, name: "", amountOwed: 0, description: "" },
   ]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadSession = async () => {
@@ -124,6 +125,12 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
     e.preventDefault();
 
     try {
+      setParticipants(participants.filter((p) => p.name !== ""));
+      const total = participants.reduce((acc, p) => acc + p.amountOwed, 0);
+      if (total < amount - 0.1 || amount + 0.1 < total) {
+        setError("Total amount does not match");
+        return;
+      }
       const response = await updateExpenseById(expenseId, {
         description: description,
         amount: amount,
@@ -131,6 +138,7 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
         participants: participants,
       });
       if (!response) {
+        setError("Something went wrong");
         console.log("Failed to update expense");
         return;
       } else {
@@ -254,6 +262,7 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
             <label className="block text-gray-700 text-sm font-bold mb-2">
               Participants
             </label>
+            {error && <p className="text-red-500 mb-4">{error}</p>}
             {participants.map((participant, index) => (
               <div key={index} className="mb-2 flex">
                 <select

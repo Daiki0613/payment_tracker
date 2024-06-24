@@ -14,7 +14,7 @@ import { SessionPayload, getSession } from "@/auth/auth";
 interface AuthContextType {
   session: SessionPayload | null;
   login: (username: string, password: string) => Promise<boolean>;
-  logout: () => Promise<void>;
+  logout: () => Promise<boolean>;
   loading: boolean;
 }
 
@@ -72,13 +72,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const handleLogout = async () => {
     setLoading(true);
     try {
-      await logout(); // Implement your logout logic
+      const result = await logout(); // Implement your logout logic
+      if (!result) {
+        return false;
+      }
       setSession(null);
       setLoading(false);
       router.push("/login"); // Redirect to login page after logout
+      return true;
     } catch (error) {
       console.error("Logout failed:", error);
       setLoading(false);
+      return false;
       // Handle logout error (e.g., display error message)
     }
   };

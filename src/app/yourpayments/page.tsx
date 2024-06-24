@@ -29,7 +29,6 @@ const Home: React.FC = () => {
     id: number;
   }>({ name: "", id: 0 });
   const [paymentErrorMsg, setPaymentErrorMsg] = useState<string | null>(null);
-  const router = useRouter();
 
   const [openDropdowns, setOpenDropdowns] = useState<{
     [key: number]: boolean;
