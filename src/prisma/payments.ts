@@ -24,6 +24,7 @@ export interface ExpenseData {
   description: string;
   amount: number;
   paidById: number;
+  personalPayment?: boolean;
   participants: ParticipantData[];
 }
 
@@ -31,6 +32,7 @@ export const createExpense = async (expenseData: ExpenseData) => {
   const expense = await prisma.expense.create({
     data: {
       description: expenseData.description,
+      personalPayment: expenseData.personalPayment,
       amount: expenseData.amount,
       paidBy: {
         connect: {
@@ -61,6 +63,9 @@ export const getExpenses = async () => {
         },
       },
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 };
 
@@ -84,29 +89,33 @@ export const updateExpenseById = async (
   id: number,
   expenseData: ExpenseData
 ) => {
-  const expense = await prisma.expense.update({
-    where: {
-      id: id,
-    },
-    data: {
-      description: expenseData.description,
-      amount: expenseData.amount,
-      paidBy: {
-        connect: {
-          id: expenseData.paidById,
+  try {
+    const expense = await prisma.expense.update({
+      where: {
+        id: id,
+      },
+      data: {
+        description: expenseData.description,
+        amount: expenseData.amount,
+        paidBy: {
+          connect: {
+            id: expenseData.paidById,
+          },
+        },
+        participants: {
+          deleteMany: {},
+          create: expenseData.participants.map((participant) => ({
+            user: { connect: { id: participant.id } },
+            amountOwed: participant.amountOwed,
+            description: participant.description,
+          })),
         },
       },
-      participants: {
-        deleteMany: {},
-        create: expenseData.participants.map((participant) => ({
-          user: { connect: { id: participant.id } },
-          amountOwed: participant.amountOwed,
-          description: participant.description,
-        })),
-      },
-    },
-  });
-  return expense;
+    });
+    return expense;
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 export const deleteExpenseById = async (id: number) => {
@@ -158,8 +167,10 @@ export interface PaymentSummary {
   totalPaid: number;
   totalOwed: number;
 
-  summarizedPayments: Payment[];
-  allTransactions: Payment[];
+  summarizedPayments: {
+    summary: Payment;
+    details: Payment[];
+  }[];
 }
 
 export interface Payment {
@@ -168,11 +179,15 @@ export interface Payment {
   participantId: number;
   participantName: string;
   amount: number;
+  personalPayment?: boolean;
+  paymentId?: number;
   description: string;
 }
 
-const summarizePayments = (payments: Payment[]): Payment[] => {
-  let summary: { [key: string]: Payment } = {};
+const summarizePayments = (
+  payments: Payment[]
+): { summary: Payment; details: Payment[] }[] => {
+  let summary: { [key: string]: { summary: Payment; details: Payment[] } } = {};
 
   payments.forEach((payment) => {
     if (payment.payerId === payment.participantId) {
@@ -182,36 +197,39 @@ const summarizePayments = (payments: Payment[]): Payment[] => {
     let key2 = `${payment.participantId}-${payment.payerId}`;
 
     if (summary[key1]) {
-      summary[key1].amount += payment.amount;
+      summary[key1].summary.amount += payment.amount;
+      summary[key1].details.push(payment);
     } else if (summary[key2]) {
-      summary[key2].amount -= payment.amount; // Adjust for opposite direction
-      if (summary[key2].amount === 0) {
-        delete summary[key2]; // Remove if net amount is zero
-      }
+      summary[key2].summary.amount -= payment.amount; // Adjust for opposite direction
+      summary[key2].details.push(payment);
     } else {
       summary[key1] = {
-        payerId: payment.payerId,
-        payerName: payment.payerName,
-        participantId: payment.participantId,
-        participantName: payment.participantName,
-        amount: payment.amount,
-        description: payment.description,
+        summary: {
+          payerId: payment.payerId,
+          payerName: payment.payerName,
+          participantId: payment.participantId,
+          participantName: payment.participantName,
+          amount: payment.amount,
+          description: payment.description,
+        },
+        details: [payment],
       };
     }
   });
 
-  let summarizedPayments: Payment[] = Object.values(summary);
+  let summarizedPayments: { summary: Payment; details: Payment[] }[] =
+    Object.values(summary);
   summarizedPayments.forEach((payment) => {
-    if (payment.amount < 0) {
-      let tempId = payment.payerId;
-      let tempName = payment.payerName;
-      payment.payerId = payment.participantId;
-      payment.payerName = payment.participantName;
-      payment.participantId = tempId;
-      payment.participantName = tempName;
-      payment.amount = -payment.amount;
+    if (payment.summary.amount < 0) {
+      let tempId = payment.summary.payerId;
+      let tempName = payment.summary.payerName;
+      payment.summary.payerId = payment.summary.participantId;
+      payment.summary.payerName = payment.summary.participantName;
+      payment.summary.participantId = tempId;
+      payment.summary.participantName = tempName;
+      payment.summary.amount = -payment.summary.amount;
     }
-    payment.amount = Math.round(payment.amount * 100) / 100;
+    payment.summary.amount = Math.round(payment.summary.amount * 100) / 100;
   });
 
   return summarizedPayments;
@@ -239,6 +257,8 @@ export const getPaymentSummary = async (
       participantId: participant.user.id,
       participantName: participant.user.name,
       amount: participant.amountOwed,
+      personalPayment: expense.personalPayment,
+      paymentId: expense.id,
       description: participant.description
         ? expense.description + " - " + participant.description
         : expense.description,
@@ -249,13 +269,12 @@ export const getPaymentSummary = async (
     (payment) => payment.payerId === userId || payment.participantId === userId
   );
 
-  const summarizedPayments: Payment[] = summarizePayments(allUserTransactions);
+  const summarizedPayments = summarizePayments(allUserTransactions);
 
   return {
     totalExpense: 0,
     totalPaid: 0,
     totalOwed: 0,
-    allTransactions: allUserTransactions,
     summarizedPayments: summarizedPayments,
   };
 };

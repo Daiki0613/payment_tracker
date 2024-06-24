@@ -13,6 +13,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { MdDelete } from "react-icons/md";
 import ConfirmationDialog from "@/components/ConfirmationDialog";
+import Link from "next/link";
 
 interface EditExpenseFormProps {
   params: {
@@ -80,120 +81,13 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
     fetchExpense();
   }, [expenseId]);
 
-  const handleAddParticipant = () => {
-    setParticipants([
-      ...participants,
-      { id: 0, name: "", amountOwed: 0, description: "" },
-    ]);
-  };
-
-  const handleParticipantChange = (
-    index: number,
-    field: keyof ParticipantData,
-    value: any
-  ) => {
-    if (field === "name") {
-      const selectedUser = users.find((user) => user.name === value);
-      if (!selectedUser) {
-        return;
-      }
-      const newParticipants = [...participants];
-      newParticipants[index] = {
-        ...newParticipants[index],
-        id: selectedUser.id,
-        name: selectedUser.name,
-      };
-      setParticipants(newParticipants);
-      return;
-    }
-
-    const newParticipants = [...participants];
-    newParticipants[index] = {
-      ...newParticipants[index],
-      [field]: value,
-    };
-    setParticipants(newParticipants);
-  };
-
-  const handleDeleteParticipant = (index: number) => {
-    const newParticipants = participants.filter((_, i) => i !== index);
-    setParticipants(newParticipants);
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    try {
-      const response = await updateExpenseById(expenseId, {
-        description: description,
-        amount: amount,
-        paidById: paidBy?.id,
-        participants: participants,
-      });
-      if (!response) {
-        console.log("Failed to update expense");
-        return;
-      } else {
-        router.push("/");
-      }
-    } catch {
-      console.log("Failed to update expense");
-    }
-  };
-
-  // const handleDelete = async () => {
-  //   const confirmed = window.confirm(
-  //     "Are you sure you want to delete this expense?"
-  //   );
-  //   if (confirmed) {
-  //     try {
-  //       await deleteExpenseById(expenseId);
-  //       router.push("/");
-  //     } catch {
-  //       console.log("Failed to delete expense");
-  //     }
-  //   }
-  // };
-
-  const handlePaidByChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedUser = users.find((user) => user.name === e.target.value);
-    if (!selectedUser) {
-      setPaidBy({ id: 0, name: "" });
-    } else {
-      setPaidBy(selectedUser);
-    }
-  };
-
-  const handleAddEveryone = () => {
-    const newParticipants = users.map((user) => ({
-      id: user.id,
-      name: user.name,
-      amountOwed: 0,
-      description: "",
-    }));
-    setParticipants(newParticipants);
-  };
-
-  const handleSplitEqually = () => {
-    const length = participants.filter((p) => p.name !== "").length;
-    if (length === 0) {
-      return;
-    }
-    const amountOwed = Math.round((amount / length) * 100) / 100;
-    const newParticipants = participants.map((participant) => ({
-      ...participant,
-      amountOwed: amountOwed,
-    }));
-    setParticipants(newParticipants);
-  };
-
   if (!session) {
     return <div>Loading...</div>;
   }
   return (
     <>
       <div className="max-w-lg mx-auto p-4 bg-white shadow-md rounded-md">
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={() => {}}>
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
@@ -205,7 +99,7 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
               id="description"
               type="text"
               value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              disabled
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               required
             />
@@ -216,13 +110,13 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
               className="block text-gray-700 text-sm font-bold mb-2"
               htmlFor="amount"
             >
-              Amount
+              Total Amount
             </label>
             <input
               id="amount"
               type="number"
               value={amount}
-              onChange={(e) => setAmount(parseFloat(e.target.value))}
+              disabled
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               required
             />
@@ -238,9 +132,9 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
             <select
               id="paidBy"
               value={paidBy?.name}
-              onChange={handlePaidByChange}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               required
+              disabled
             >
               {users.map((user) => (
                 <option key={user.id} value={user.name}>
@@ -258,9 +152,7 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
               <div key={index} className="mb-2 flex">
                 <select
                   value={participant.name}
-                  onChange={(e) =>
-                    handleParticipantChange(index, "name", e.target.value)
-                  }
+                  disabled
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline mr-2"
                 >
                   <option value="">Select Participant</option>
@@ -281,13 +173,7 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
                   type="number"
                   placeholder="Amount Owed"
                   value={participant.amountOwed}
-                  onChange={(e) =>
-                    handleParticipantChange(
-                      index,
-                      "amountOwed",
-                      parseFloat(e.target.value)
-                    )
-                  }
+                  disabled
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   required
                 />
@@ -295,84 +181,21 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
                   type="string"
                   placeholder="note"
                   value={participant.description}
-                  onChange={(e) =>
-                    handleParticipantChange(
-                      index,
-                      "description",
-                      e.target.value
-                    )
-                  }
+                  disabled
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 />
-                <button
-                  type="button"
-                  onClick={() => handleDeleteParticipant(index)}
-                  className="px-1"
-                >
-                  <MdDelete className="text-red-500" />
-                </button>
               </div>
             ))}
-
-            <div className="flex justify-between">
-              <button
-                type="button"
-                onClick={handleAddParticipant}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4"
-              >
-                Add Participant
-              </button>
-              <button
-                type="button"
-                onClick={handleAddEveryone}
-                className="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4"
-              >
-                Add Everyone
-              </button>
-              <button
-                type="button"
-                onClick={handleSplitEqually}
-                className="bg-gray-400 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4"
-              >
-                Split Equally
-              </button>
-            </div>
           </div>
-
-          <div className="flex justify-between">
-            <div className="flex items-center justify-between">
-              <button
-                type="submit"
-                className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                Update Expense
-              </button>
-            </div>
-            <div className="flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => setIsDialogOpen(true)}
-                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                Delete Expense
-              </button>
-            </div>
-          </div>
+          <button
+            type="button"
+            onClick={() => router.push(`/edit/${expenseId}`)}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-2"
+          >
+            Edit
+          </button>
         </form>
       </div>
-      <ConfirmationDialog
-        isOpen={isDialogOpen}
-        onConfirm={async () => {
-          try {
-            await deleteExpenseById(expenseId);
-            router.push("/");
-          } catch {
-            console.log("Failed to delete expense");
-          }
-        }}
-        onCancel={() => setIsDialogOpen(false)}
-        message="Are you sure you want to delete?"
-      />
     </>
   );
 };
