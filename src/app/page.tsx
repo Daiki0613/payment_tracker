@@ -1,6 +1,8 @@
 "use client";
 
 import { ExpensesWithParticipants, getExpenses } from "@/prisma/payments";
+import { currencyToString } from "@/utils/currency";
+import { Currency } from "@prisma/client";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 
@@ -58,7 +60,10 @@ const Home: React.FC = () => {
                     <h1 className="text-lg font-bold">{expense.description}</h1>
                   </div>
                 </Link>
-                <p className="text-gray-600">Amount: {expense.amount}</p>
+                <p className="text-gray-600">
+                  Amount: {expense.currency == Currency.EUR ? "€" : "£"}{" "}
+                  {expense.amount}
+                </p>
                 <p className="text-gray-600">Paid by: {expense.paidBy.name}</p>
               </div>
               <div className="border-t border-gray-200 pt-2">
@@ -84,7 +89,10 @@ const Home: React.FC = () => {
                     {expense.participants.map((participant, idx) => (
                       <div key={idx} className="bg-gray-100 p-2 rounded-lg">
                         <p className="text-sm">
-                          {participant.user.name}: {participant.amountOwed}
+                          {participant.user.name}
+                          {": "}
+                          {currencyToString(expense.currency)}
+                          {participant.amountOwed}
                           {participant.description &&
                             ` (${participant.description})`}
                         </p>

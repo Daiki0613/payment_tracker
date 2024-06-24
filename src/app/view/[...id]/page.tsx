@@ -6,6 +6,7 @@ import { ParticipantData, getExpenseById } from "@/prisma/payments";
 import { UserData, getUsers } from "@/prisma/users";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
+import { Currency } from "@prisma/client";
 
 interface EditExpenseFormProps {
   params: {
@@ -24,6 +25,7 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
   const [paidBy, setPaidBy] = useState<UserData>({ id: 0, name: "" });
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState(0);
+  const [currency, setCurrency] = useState<Currency>(Currency.EUR);
   const [participants, setParticipants] = useState<ParticipantData[]>([
     { id: 0, name: "", amountOwed: 0, description: "" },
   ]);
@@ -58,6 +60,7 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
         }
         setDescription(expense.description);
         setAmount(expense.amount);
+        setCurrency(expense.currency);
         setPaidBy({ id: expense.paidBy.id, name: expense.paidBy.name });
         const participants: ParticipantData[] = expense.participants.map(
           (participant) => ({
@@ -104,14 +107,27 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
             >
               Total Amount
             </label>
-            <input
-              id="amount"
-              type="number"
-              value={amount}
-              disabled
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              required
-            />
+            <div className="flex justify-between">
+              <select
+                value={currency}
+                disabled
+                className="shadow appearance-none border rounded w-1/6 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              >
+                {Object.values(Currency).map((currency) => (
+                  <option key={currency} value={currency}>
+                    {currency}
+                  </option>
+                ))}
+              </select>
+              <input
+                id="amount"
+                type="number"
+                value={amount}
+                disabled
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                required
+              />
+            </div>
           </div>
 
           <div className="mb-4">

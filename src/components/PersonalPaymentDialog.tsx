@@ -24,7 +24,7 @@ const PaymentDialog: React.FC<ConfirmationDialogProps> = ({
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
       <div className="bg-white dark:bg-gray-800 rounded-md p-4 shadow-lg">
-        <p className="mb-4">Paying to {user.name}</p>
+        <p className="mb-4">Paying to {user.name} (GBP)</p>
         {error && <p className="text-red-500 mb-4">{error}</p>}
         <div className="mb-4">
           <input

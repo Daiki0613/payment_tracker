@@ -13,6 +13,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { MdDelete } from "react-icons/md";
 import ConfirmationDialog from "@/components/ConfirmationDialog";
+import { Currency } from "@prisma/client";
 
 interface EditExpenseFormProps {
   params: {
@@ -31,6 +32,7 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
   const [paidBy, setPaidBy] = useState<UserData>({ id: 0, name: "" });
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState(0);
+  const [currency, setCurrency] = useState<Currency>(Currency.EUR);
   const [participants, setParticipants] = useState<ParticipantData[]>([
     { id: 0, name: "", amountOwed: 0, description: "" },
   ]);
@@ -66,6 +68,7 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
         }
         setDescription(expense.description);
         setAmount(expense.amount);
+        setCurrency(expense.currency);
         setPaidBy({ id: expense.paidBy.id, name: expense.paidBy.name });
         const participants: ParticipantData[] = expense.participants.map(
           (participant) => ({
@@ -134,6 +137,7 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
       const response = await updateExpenseById(expenseId, {
         description: description,
         amount: amount,
+        currency: currency,
         paidById: paidBy?.id,
         participants: participants,
       });
@@ -272,14 +276,27 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
             >
               Amount
             </label>
-            <input
-              id="amount"
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(parseFloat(e.target.value))}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              required
-            />
+            <div className="flex justify-between">
+              <select
+                value={currency}
+                onChange={(e) => setCurrency(e.target.value as Currency)}
+                className="shadow appearance-none border rounded w-1/6 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              >
+                {Object.values(Currency).map((currency) => (
+                  <option key={currency} value={currency}>
+                    {currency}
+                  </option>
+                ))}
+              </select>
+              <input
+                id="amount"
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(parseFloat(e.target.value))}
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                required
+              />
+            </div>
           </div>
 
           <div className="mb-4">

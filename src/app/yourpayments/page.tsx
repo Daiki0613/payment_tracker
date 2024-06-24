@@ -12,6 +12,8 @@ import {
   getPaidExpensesByUserId,
   getPaymentSummary,
 } from "@/prisma/payments";
+import { currencyToString } from "@/utils/currency";
+import { Currency } from "@prisma/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -105,7 +107,10 @@ const Home: React.FC = () => {
                       className="w-full max-w-lg text-left ml-5 p-2"
                     >
                       {summary.participantName} owes you{" "}
-                      <span className="text-green-600">{summary.amount}</span>{" "}
+                      <span className="text-green-600">
+                        {currencyToString(summary.currency)}
+                        {summary.amount}
+                      </span>{" "}
                       in total
                     </p>
                   );
@@ -117,7 +122,10 @@ const Home: React.FC = () => {
                     >
                       <p>
                         You owe {summary.payerName}{" "}
-                        <span className="text-red-600">{summary.amount}</span>{" "}
+                        <span className="text-red-600">
+                          {currencyToString(summary.currency)}
+                          {summary.amount}
+                        </span>{" "}
                         in total
                       </p>
                       <button
@@ -138,6 +146,7 @@ const Home: React.FC = () => {
                   return (
                     <p key={index} className="w-full max-w-lg text-left ml-5">
                       {summary.participantName} owes {summary.payerName}{" "}
+                      {currencyToString(summary.currency)}
                       {summary.amount} in total
                     </p>
                   );
@@ -162,6 +171,7 @@ const Home: React.FC = () => {
                                   className="hover:text-black"
                                 >
                                   You paid {expense.participantName}:{" "}
+                                  {currencyToString(expense.currency)}
                                   {expense.amount}
                                 </Link>
                               </p>
@@ -176,7 +186,9 @@ const Home: React.FC = () => {
                                   href={`view/${expense.paymentId}`}
                                   className="hover:text-black"
                                 >
-                                  {expense.payerName} paid you: {expense.amount}
+                                  {expense.payerName} paid you:{" "}
+                                  {currencyToString(expense.currency)}
+                                  {expense.amount}
                                 </Link>
                               </p>
                             );
@@ -189,6 +201,7 @@ const Home: React.FC = () => {
                             >
                               {expense.participantName} owes you{" "}
                               <span className="text-green-500">
+                                {currencyToString(expense.currency)}
                                 {expense.amount}
                               </span>{" "}
                               for{" "}
@@ -208,6 +221,7 @@ const Home: React.FC = () => {
                             >
                               You owe {expense.payerName}{" "}
                               <span className="text-red-600">
+                                {currencyToString(expense.currency)}
                                 {expense.amount}
                               </span>{" "}
                               for{" "}
@@ -226,6 +240,7 @@ const Home: React.FC = () => {
                               className="w-full max-w-lg text-left ml-5"
                             >
                               {expense.participantName} owes {expense.payerName}{" "}
+                              {currencyToString(expense.currency)}
                               {expense.amount} for{" "}
                               <Link
                                 href={`view/${expense.paymentId}`}
@@ -287,6 +302,9 @@ const Home: React.FC = () => {
         }}
         onConfirm={async () => {
           try {
+            if (paymentAmount <= 0) {
+              throw new Error("Payment invalid");
+            }
             if (!session) {
               throw new Error("User not logged in");
             }
@@ -294,6 +312,7 @@ const Home: React.FC = () => {
               description: `Payment ${session.name} -> ${paymentRecipient.name}`,
               personalPayment: true,
               amount: paymentAmount,
+              currency: Currency.GBP,
               paidById: session?.userId,
               participants: [
                 {

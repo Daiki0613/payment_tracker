@@ -3,6 +3,7 @@
 import { SessionPayload, getSession } from "@/auth/auth";
 import { ParticipantData, createExpense } from "@/prisma/payments";
 import { UserData, getUsers } from "@/prisma/users";
+import { Currency } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { MdDelete } from "react-icons/md";
@@ -14,6 +15,7 @@ const CreateExpenseForm: React.FC = () => {
   const [paidBy, setPaidBy] = useState<UserData>({ id: 0, name: "" });
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState(0);
+  const [currency, setCurrency] = useState<Currency>(Currency.EUR);
   const [participants, setParticipants] = useState<ParticipantData[]>([
     { id: 0, name: "", amountOwed: 0, description: "" },
   ]);
@@ -92,6 +94,7 @@ const CreateExpenseForm: React.FC = () => {
       const response = await createExpense({
         description: description,
         amount: amount,
+        currency: currency,
         paidById: paidBy?.id,
         participants: participants,
       });
@@ -149,7 +152,6 @@ const CreateExpenseForm: React.FC = () => {
     // Calculate base payment and remainder
     const basePayment = Math.floor(intAmount / length); // Allow decimal division for exact amounts
     const remainder = intAmount - basePayment * length;
-    console.log(remainder);
 
     // Shuffle participants array to randomize who pays more or less
     const shuffledParticipants = shuffleArray(filteredParticipants);
@@ -215,14 +217,27 @@ const CreateExpenseForm: React.FC = () => {
         >
           Amount
         </label>
-        <input
-          id="amount"
-          type="number"
-          value={amount}
-          onChange={(e) => setAmount(parseFloat(e.target.value))}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          required
-        />
+        <div className="flex justify-between">
+          <select
+            value={currency}
+            onChange={(e) => setCurrency(e.target.value as Currency)}
+            className="shadow appearance-none border rounded w-1/6 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          >
+            {Object.values(Currency).map((currency) => (
+              <option key={currency} value={currency}>
+                {currency}
+              </option>
+            ))}
+          </select>
+          <input
+            id="amount"
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(parseFloat(e.target.value))}
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            required
+          />
+        </div>
       </div>
 
       <div className="mb-4">

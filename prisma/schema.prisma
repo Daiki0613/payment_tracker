@@ -29,6 +29,7 @@ model Expense {
   personalPayment Boolean @default(false)
   description String
   amount      Float
+  currency    Currency @default(EUR)
   paidBy      User      @relation(fields: [paidById], references: [id])
   paidById    Int
   participants Participant[]
@@ -43,4 +44,9 @@ model Participant {
   expenseId  Int
   amountOwed Float
   description String
+}
+
+enum Currency {
+  EUR
+  GBP
 }

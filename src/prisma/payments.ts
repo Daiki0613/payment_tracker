@@ -1,8 +1,9 @@
 "use server";
 
-import { Prisma } from "@prisma/client";
+import { Currency, Prisma } from "@prisma/client";
 import prisma from "./connect";
 import { getUsers } from "./users";
+import { currencyToGBP, euroToPound } from "@/utils/currency";
 
 // const userData = Prisma.validator<Prisma.UserDefaultArgs>()({
 //   select: {
@@ -23,6 +24,7 @@ export interface ParticipantData {
 export interface ExpenseData {
   description: string;
   amount: number;
+  currency: Currency;
   paidById: number;
   personalPayment?: boolean;
   participants: ParticipantData[];
@@ -34,6 +36,7 @@ export const createExpense = async (expenseData: ExpenseData) => {
       description: expenseData.description,
       personalPayment: expenseData.personalPayment,
       amount: expenseData.amount,
+      currency: expenseData.currency,
       paidBy: {
         connect: {
           id: expenseData.paidById,
@@ -118,6 +121,15 @@ export const updateExpenseById = async (
   }
 };
 
+export const deleteExpenses = async (): Promise<boolean> => {
+  try {
+    await prisma.expense.deleteMany({});
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 export const deleteExpenseById = async (id: number) => {
   return await prisma.expense.delete({
     where: {
@@ -179,6 +191,7 @@ export interface Payment {
   participantId: number;
   participantName: string;
   amount: number;
+  currency: Currency;
   personalPayment?: boolean;
   paymentId?: number;
   description: string;
@@ -197,10 +210,16 @@ const summarizePayments = (
     let key2 = `${payment.participantId}-${payment.payerId}`;
 
     if (summary[key1]) {
-      summary[key1].summary.amount += payment.amount;
+      const amount = (summary[key1].summary.amount += currencyToGBP(
+        payment.amount,
+        payment.currency
+      ));
       summary[key1].details.push(payment);
     } else if (summary[key2]) {
-      summary[key2].summary.amount -= payment.amount; // Adjust for opposite direction
+      summary[key2].summary.amount -= currencyToGBP(
+        payment.amount,
+        payment.currency
+      ); // Adjust for opposite direction
       summary[key2].details.push(payment);
     } else {
       summary[key1] = {
@@ -209,7 +228,8 @@ const summarizePayments = (
           payerName: payment.payerName,
           participantId: payment.participantId,
           participantName: payment.participantName,
-          amount: payment.amount,
+          amount: currencyToGBP(payment.amount, payment.currency),
+          currency: Currency.GBP,
           description: payment.description,
         },
         details: [payment],
@@ -257,6 +277,7 @@ export const getPaymentSummary = async (
       participantId: participant.user.id,
       participantName: participant.user.name,
       amount: participant.amountOwed,
+      currency: expense.currency,
       personalPayment: expense.personalPayment,
       paymentId: expense.id,
       description: participant.description
