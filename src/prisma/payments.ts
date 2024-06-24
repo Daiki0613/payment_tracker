@@ -100,6 +100,7 @@ export const updateExpenseById = async (
       data: {
         description: expenseData.description,
         amount: expenseData.amount,
+        currency: expenseData.currency,
         paidBy: {
           connect: {
             id: expenseData.paidById,
