@@ -57,7 +57,9 @@ const Home: React.FC = () => {
               <div className="grid grid-cols-3 gap-4">
                 <Link href={"/view/" + expense.id}>
                   <div className="col-span-1">
-                    <h1 className="text-lg font-bold">{expense.description}</h1>
+                    <h1 className="text-lg font-bold text-black">
+                      {expense.description}
+                    </h1>
                   </div>
                 </Link>
                 <p className="text-gray-600">

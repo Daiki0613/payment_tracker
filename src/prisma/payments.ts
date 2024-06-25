@@ -69,6 +69,7 @@ export const getExpenses = async () => {
     orderBy: {
       createdAt: "desc",
     },
+    take: 20,
   });
 };
 

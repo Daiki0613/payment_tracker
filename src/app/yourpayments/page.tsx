@@ -78,7 +78,7 @@ const Home: React.FC = () => {
   return (
     <main className="flex min-h-screen justify-center ">
       <div className="flex flex-col items-center w-full max-w-2xl m-4 bg-gray-100">
-        <div className="text-2xl font-bold mb-4 mt-4">
+        <div className="text-2xl font-bold mb-4 mt-4 text-black">
           {session?.name}&apos;s Payments Summary
         </div>
         {paymentSummary?.summarizedPayments.length === 0 ? (
@@ -95,7 +95,7 @@ const Home: React.FC = () => {
                   return (
                     <p
                       key={index}
-                      className="w-full max-w-lg text-left ml-5 p-2"
+                      className="w-full max-w-lg text-left ml-5 p-2 text-black"
                     >
                       Payment completed with {other}
                     </p>
@@ -104,7 +104,7 @@ const Home: React.FC = () => {
                   return (
                     <p
                       key={index}
-                      className="w-full max-w-lg text-left ml-5 p-2"
+                      className="w-full max-w-lg text-left ml-5 p-2 text-black"
                     >
                       {summary.participantName} owes you{" "}
                       <span className="text-green-600">
@@ -118,7 +118,7 @@ const Home: React.FC = () => {
                   return (
                     <p
                       key={index}
-                      className="w-full max-w-lg text-left ml-5 flex justify-between p-2"
+                      className="w-full max-w-lg text-left ml-5 flex justify-between p-2 text-black"
                     >
                       <p>
                         You owe {summary.payerName}{" "}
