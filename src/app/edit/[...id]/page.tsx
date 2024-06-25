@@ -31,7 +31,7 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
   const [users, setUsers] = useState<UserData[]>([]);
   const [paidBy, setPaidBy] = useState<UserData>({ id: 0, name: "" });
   const [description, setDescription] = useState("");
-  const [amount, setAmount] = useState(0);
+  const [amount, setAmount] = useState("");
   const [currency, setCurrency] = useState<Currency>(Currency.EUR);
   const [participants, setParticipants] = useState<ParticipantData[]>([
     { id: 0, name: "", amountOwed: 0, description: "" },
@@ -133,7 +133,8 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (amount <= 0 || amount > 5000) {
+    const parsedAmount = parseFloat(amount);
+    if (parsedAmount <= 0 || parsedAmount > 5000) {
       setError("Please make the values greater than 0");
       return;
     }
@@ -145,13 +146,13 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
         return;
       }
       const total = participants.reduce((acc, p) => acc + p.amountOwed, 0);
-      if (total < amount - 0.1 || amount + 0.1 < total) {
+      if (total < parsedAmount - 0.1 || parsedAmount + 0.1 < total) {
         setError("Total amount does not match");
         return;
       }
       const response = await updateExpenseById(expenseId, {
         description: description,
-        amount: amount,
+        amount: parsedAmount,
         currency: currency,
         paidById: paidBy?.id,
         participants: participants,
@@ -222,7 +223,7 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
       return;
     }
 
-    const intAmount = Math.round(amount * 100);
+    const intAmount = Math.round(parseFloat(amount) * 100);
     // Calculate base payment and remainder
     const basePayment = Math.floor(intAmount / length); // Allow decimal division for exact amounts
     const remainder = intAmount - basePayment * length;
@@ -308,7 +309,7 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
                 type="number"
                 value={amount}
                 onChange={(e) => {
-                  setAmount(parseFloat(e.target.value));
+                  setAmount(e.target.value);
                 }}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 required
