@@ -74,15 +74,22 @@ const CreateExpenseForm: React.FC = () => {
         name: selectedUser.name,
       };
       setParticipants(newParticipants);
-      return;
+    } else if (field === "amountOwed") {
+      const amount = parseFloat(value);
+      const newParticipants = [...participants];
+      newParticipants[index] = {
+        ...newParticipants[index],
+        amountOwed: amount,
+      };
+      setParticipants(newParticipants);
+    } else {
+      const newParticipants = [...participants];
+      newParticipants[index] = {
+        ...newParticipants[index],
+        [field]: value,
+      };
+      setParticipants(newParticipants);
     }
-
-    const newParticipants = [...participants];
-    newParticipants[index] = {
-      ...newParticipants[index],
-      [field]: value,
-    };
-    setParticipants(newParticipants);
   };
 
   const handleDeleteParticipant = (index: number) => {
@@ -321,11 +328,7 @@ const CreateExpenseForm: React.FC = () => {
               placeholder="Amount Owed"
               value={participant.amountOwed}
               onChange={(e) =>
-                handleParticipantChange(
-                  index,
-                  "amountOwed",
-                  parseFloat(e.target.value)
-                )
+                handleParticipantChange(index, "amountOwed", e.target.value)
               }
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               required
