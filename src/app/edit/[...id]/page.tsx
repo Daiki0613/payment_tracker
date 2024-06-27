@@ -67,7 +67,7 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
           notFound();
         }
         setDescription(expense.description);
-        setAmount(expense.amount);
+        setAmount(expense.amount.toString());
         setCurrency(expense.currency);
         setPaidBy({ id: expense.paidBy.id, name: expense.paidBy.name });
         const participants: ParticipantData[] = expense.participants.map(
