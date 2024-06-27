@@ -73,6 +73,22 @@ export const getExpenses = async () => {
   });
 };
 
+export const getAllExpenses = async () => {
+  return await prisma.expense.findMany({
+    include: {
+      paidBy: true,
+      participants: {
+        include: {
+          user: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};
+
 export const getExpenseById = async (id: number) => {
   return await prisma.expense.findFirst({
     where: {

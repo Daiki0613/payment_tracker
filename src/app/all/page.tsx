@@ -1,6 +1,6 @@
 "use client";
 
-import { ExpensesWithParticipants, getExpenses } from "@/prisma/payments";
+import { ExpensesWithParticipants, getAllExpenses } from "@/prisma/payments";
 import { currencyToString } from "@/utils/currency";
 import { Currency } from "@prisma/client";
 import Link from "next/link";
@@ -21,7 +21,7 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     const fetchExpenses = async () => {
-      const data = await getExpenses();
+      const data = await getAllExpenses();
       setExpenses(data);
       setLoading(false);
     };
@@ -44,7 +44,7 @@ const Home: React.FC = () => {
   return (
     <main className="flex min-h-screen justify-center">
       <div className="flex flex-col items-center w-full max-w-7xl m-1">
-        <div className="text-2xl font-bold mb-4 mt-2">Recent Payments</div>
+        <div className="text-2xl font-bold mb-4 mt-2">All Payments</div>
 
         {expenses.length === 0 ? (
           <p className="text-gray-600 mt-4">No expenses yet...</p>

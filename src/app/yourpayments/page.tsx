@@ -31,6 +31,9 @@ const Home: React.FC = () => {
     id: number;
   }>({ name: "", id: 0 });
   const [paymentErrorMsg, setPaymentErrorMsg] = useState<string | null>(null);
+  const [totalExpense, setTotalExpense] = useState<number>(0);
+  const [totalPaid, setTotalPaid] = useState<number>(0);
+  const [totalOwed, setTotalOwed] = useState<number>(0);
 
   const [openDropdowns, setOpenDropdowns] = useState<{
     [key: number]: boolean;
@@ -56,6 +59,17 @@ const Home: React.FC = () => {
       const paymentSummary = await getPaymentSummary(session.userId);
       setPaymentSummary(paymentSummary);
       setLoading(false);
+
+      let total = 0;
+      paymentSummary.summarizedPayments.forEach((payment) => {
+        if (payment.summary.payerId === session.userId) {
+          total += payment.summary.amount;
+        } else {
+          total -= payment.summary.amount;
+        }
+      });
+      total = Math.round(total * 100) / 100;
+      setTotalExpense(total);
     };
     fetchExpenses();
   }, []);
@@ -80,6 +94,19 @@ const Home: React.FC = () => {
       <div className="flex flex-col items-center w-full max-w-2xl m-4 bg-gray-100">
         <div className="text-2xl font-bold mb-4 mt-4 text-black">
           {session?.name}&apos;s Payments Summary
+        </div>
+        <div className="flex justify-between w-full max-w-lg">
+          {totalExpense > 0 ? (
+            <div className="flex">
+              <span className="mr-2">Net payment to be recieved</span>
+              <span className="text-green-600"> £{totalExpense}</span>
+            </div>
+          ) : (
+            <div className="flex">
+              <span className="mr-2">Net payment needed to make </span>
+              <span className="text-red-600"> £{totalExpense}</span>
+            </div>
+          )}
         </div>
         {paymentSummary?.summarizedPayments.length === 0 ? (
           <p className="text-gray-600 mt-4">No expenses yet...</p>
