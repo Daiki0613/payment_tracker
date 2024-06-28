@@ -104,7 +104,7 @@ const Home: React.FC = () => {
           ) : (
             <div className="flex">
               <span className="mr-2">Net payment needed to make </span>
-              <span className="text-red-600"> £{totalExpense}</span>
+              <span className="text-red-600"> £{-totalExpense}</span>
             </div>
           )}
         </div>
