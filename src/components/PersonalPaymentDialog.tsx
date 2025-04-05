@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { FaPoundSign } from "react-icons/fa";
 
 interface ConfirmationDialogProps {
   error: string | null;
@@ -22,31 +23,53 @@ const PaymentDialog: React.FC<ConfirmationDialogProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-75">
-      <div className="bg-white dark:bg-gray-800 rounded-md p-4 shadow-lg">
-        <p className="mb-4">Paying to {user.name} (GBP)</p>
-        {error && <p className="text-red-500 mb-4">{error}</p>}
-        <div className="mb-4">
-          <input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(parseFloat(e.target.value))}
-            className="w-full rounded-md border border-gray-300 p-2 dark:bg-gray-700 dark:border-gray-600"
-            placeholder="Enter amount"
-          />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm transition-opacity">
+      <div className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all dark:bg-gray-800">
+        <h3 className="text-lg font-medium leading-6 text-gray-900 dark:text-white">
+          Make Payment
+        </h3>
+        <div className="mt-2">
+          <p className="text-sm text-gray-500 dark:text-gray-300">
+            You are sending money to <span className="font-medium text-gray-700 dark:text-gray-200">{user.name}</span>
+          </p>
         </div>
-        <div className="flex justify-end">
+        {error && (
+          <div className="mt-3 rounded-md bg-red-50 p-3 dark:bg-red-900 dark:bg-opacity-20">
+            <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+          </div>
+        )}
+        <div className="mt-4">
+          <label htmlFor="amount" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+            Amount (GBP)
+          </label>
+          <div className="relative mt-1 rounded-md shadow-sm">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <FaPoundSign className="h-4 w-4 text-gray-400" />
+            </div>
+            <input
+              type="number"
+              id="amount"
+              value={amount}
+              onChange={(e) => setAmount(parseFloat(e.target.value) || 0)}
+              className="block w-full rounded-md border-gray-300 pl-10 pr-4 py-2 focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+              placeholder="0.00"
+              step="0.01"
+              min="0"
+            />
+          </div>
+        </div>
+        <div className="mt-6 flex justify-end space-x-3">
           <button
             onClick={onCancel}
-            className="mr-2 rounded-md px-4 py-2 bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600"
+            className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="rounded-md px-4 py-2 bg-green-500 hover:bg-green-600 text-white"
+            className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           >
-            Confirm
+            Send Payment
           </button>
         </div>
       </div>

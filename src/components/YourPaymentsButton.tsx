@@ -7,10 +7,11 @@ const YourPaymentsButton: React.FC = () => {
   return (
     <button
       onClick={() => router.push("yourpayments")}
-      className="mb-0.5 rounded-md px-2 py-2 hover:bg-gray-300 hover:text-gray-800 focus:outline-none dark:hover:bg-gray-700 dark:hover:text-gray-200"
+      className="flex items-center rounded-full bg-white bg-opacity-10 px-4 py-2 text-white transition-all hover:bg-opacity-20 hover:shadow-lg focus:outline-none"
       title="Your Payments"
     >
-      <IoReceiptOutline size={22} />
+      <IoReceiptOutline size={20} className="mr-2" />
+      <span className="font-medium">My Payments</span>
     </button>
   );
 };

@@ -1,24 +1,22 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-// import AuthLinks from "../authLinks/AuthLinks";
-import Logo from "@/app/icon.svg";
 import NewPaymentButton from "./NewPaymentButton";
 import LogoutButton from "./LogoutButton";
 import YourPaymentsButton from "./YourPaymentsButton";
 import { FaHome } from "react-icons/fa";
+import { FaMoneyBillTransfer } from "react-icons/fa6";
 
 const Navbar = async () => {
   return (
-    <div className="flex items-center justify-between bg-rose-200 px-6 py-4 text-gray-700">
+    <div className="sticky top-0 z-50 flex items-center justify-between bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3 text-white shadow-md">
       <div className="flex items-center space-x-3">
-        <Link className="flex" href="/all">
-          <FaHome size="22" className="mx-4" />
-          <div>Payment Tracker</div>
-          {/* <Image priority src={Logo} alt="logo" width={30} height={30} /> */}
+        <Link className="flex items-center transition-transform hover:scale-105" href="/all">
+          <FaMoneyBillTransfer size="24" className="mr-3" />
+          <div className="text-xl font-semibold">PayTrack</div>
         </Link>
       </div>
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-4">
         <YourPaymentsButton />
         <NewPaymentButton />
         <LogoutButton />

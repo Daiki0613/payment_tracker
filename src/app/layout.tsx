@@ -8,8 +8,8 @@ import Footer from "@/components/Footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Payment Tracker",
-  description: "Track payments",
+  title: "PayTrack | Modern Payment Tracking",
+  description: "Track and manage payments with ease",
 };
 
 export default function RootLayout({
@@ -18,11 +18,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" className={inter.className}>
+      <body className="flex min-h-screen flex-col bg-gray-50 dark:bg-gray-900">
         <AuthProvider>
           <Navbar />
-          <div className="min-h-screen">{children}</div>
+          <main className="flex-grow">{children}</main>
           <Footer />
         </AuthProvider>
       </body>
