@@ -14,7 +14,7 @@ const Navbar = async () => {
       <div className="flex items-center space-x-3">
         <Link className="flex" href="/all">
           <FaHome size="22" className="mx-4" />
-          <div>Bordeaux Payment Tracker</div>
+          <div>Payment Tracker</div>
           {/* <Image priority src={Logo} alt="logo" width={30} height={30} /> */}
         </Link>
       </div>
