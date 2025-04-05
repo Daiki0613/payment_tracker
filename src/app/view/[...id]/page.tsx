@@ -25,7 +25,7 @@ const EditExpenseForm: React.FC<EditExpenseFormProps> = ({
   const [paidBy, setPaidBy] = useState<UserData>({ id: 0, name: "" });
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState(0);
-  const [currency, setCurrency] = useState<Currency>(Currency.EUR);
+  const [currency, setCurrency] = useState<Currency>(Currency.JPY);
   const [participants, setParticipants] = useState<ParticipantData[]>([
     { id: 0, name: "", amountOwed: 0, description: "" },
   ]);

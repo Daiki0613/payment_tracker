@@ -63,7 +63,8 @@ const Home: React.FC = () => {
                   </div>
                 </Link>
                 <p className="text-gray-600">
-                  Amount: {expense.currency == Currency.EUR ? "€" : "£"}{" "}
+                  ¥
+                  {/* Amount: {expense.currency == Currency.EUR ? "€" : "£"}{" "} */}
                   {expense.amount}
                 </p>
                 <p className="text-gray-600">Paid by: {expense.paidBy.name}</p>

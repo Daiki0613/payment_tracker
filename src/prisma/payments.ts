@@ -3,7 +3,7 @@
 import { Currency, Prisma } from "@prisma/client";
 import prisma from "./connect";
 import { getUsers } from "./users";
-import { currencyToGBP, euroToPound } from "@/utils/currency";
+import { currencyToJPY } from "@/utils/currency";
 
 // const userData = Prisma.validator<Prisma.UserDefaultArgs>()({
 //   select: {
@@ -228,15 +228,13 @@ const summarizePayments = (
     let key2 = `${payment.participantId}-${payment.payerId}`;
 
     if (summary[key1]) {
-      const amount = (summary[key1].summary.amount += currencyToGBP(
-        payment.amount,
-        payment.currency
+      const amount = (summary[key1].summary.amount += currencyToJPY(
+        payment.amount
       ));
       summary[key1].details.push(payment);
     } else if (summary[key2]) {
-      summary[key2].summary.amount -= currencyToGBP(
-        payment.amount,
-        payment.currency
+      summary[key2].summary.amount -= currencyToJPY(
+        payment.amount
       ); // Adjust for opposite direction
       summary[key2].details.push(payment);
     } else {
@@ -246,8 +244,8 @@ const summarizePayments = (
           payerName: payment.payerName,
           participantId: payment.participantId,
           participantName: payment.participantName,
-          amount: currencyToGBP(payment.amount, payment.currency),
-          currency: Currency.GBP,
+          amount: currencyToJPY(payment.amount),
+          currency: Currency.JPY,
           description: payment.description,
         },
         details: [payment],

@@ -134,7 +134,7 @@ const Home: React.FC = () => {
             {totalExpense > 0 ? (
               <div className="flex flex-col">
                 <span className="text-sm opacity-80">To receive</span>
-                <span className="text-3xl font-bold">£{totalExpense.toFixed(2)}</span>
+                <span className="text-3xl font-bold">¥{totalExpense.toFixed(2)}</span>
                 <span className="mt-2 inline-flex items-center text-sm text-green-100">
                   <span className="rounded-full bg-green-200 bg-opacity-30 px-2 py-0.5 text-xs font-medium text-green-100">
                     Positive balance
@@ -144,7 +144,7 @@ const Home: React.FC = () => {
             ) : (
               <div className="flex flex-col">
                 <span className="text-sm opacity-80">To pay</span>
-                <span className="text-3xl font-bold">£{Math.abs(totalExpense).toFixed(2)}</span>
+                <span className="text-3xl font-bold">¥{Math.abs(totalExpense).toFixed(2)}</span>
                 <span className="mt-2 inline-flex items-center text-sm text-red-100">
                   <span className="rounded-full bg-red-500 bg-opacity-30 px-2 py-0.5 text-xs font-medium text-red-100">
                     Outstanding balance
@@ -416,7 +416,7 @@ const Home: React.FC = () => {
               description: `Payment ${session.name} -> ${paymentRecipient.name}`,
               personalPayment: true,
               amount: paymentAmount,
-              currency: Currency.GBP,
+              currency: Currency.JPY,
               paidById: session?.userId,
               participants: [
                 {

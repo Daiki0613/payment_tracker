@@ -29,7 +29,7 @@ model Expense {
   personalPayment Boolean @default(false)
   description String
   amount      Float
-  currency    Currency @default(EUR)
+  currency    Currency @default(JPY)
   paidBy      User      @relation(fields: [paidById], references: [id])
   paidById    Int
   participants Participant[]
@@ -47,6 +47,5 @@ model Participant {
 }
 
 enum Currency {
-  EUR
-  GBP
+  JPY
 }

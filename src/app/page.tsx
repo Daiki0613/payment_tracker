@@ -93,7 +93,7 @@ const Home: React.FC = () => {
                 </Link>
                 <div className="flex flex-wrap items-center gap-4">
                   <div className="rounded-full bg-indigo-50 px-4 py-1.5 text-sm font-medium text-indigo-700 dark:bg-indigo-900 dark:bg-opacity-30 dark:text-indigo-400">
-                    {expense.currency === Currency.EUR ? "€" : "£"} {expense.amount}
+                    ¥ {expense.amount}
                   </div>
                   <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
                     <span className="mr-1 font-medium">Paid by:</span> {expense.paidBy.name}

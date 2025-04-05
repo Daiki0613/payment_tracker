@@ -1,13 +1,10 @@
 import { Currency } from "@prisma/client";
 
 export const currencyToString = (currency: Currency): string => {
-  return currency === Currency.EUR ? "€" : "£";
+  return "¥";
 };
 
-export const euroToPound = (amount: number): number => {
-  return amount * 0.85;
-};
-
-export const currencyToGBP = (amount: number, currency: Currency): number => {
-  return currency === Currency.GBP ? amount : euroToPound(amount);
+// No conversion needed as we only use JPY now
+export const currencyToJPY = (amount: number): number => {
+  return amount;
 };
